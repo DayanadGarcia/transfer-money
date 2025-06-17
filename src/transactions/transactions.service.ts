@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { CreateTransactionDto } from './dto/create-transaction.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -10,7 +11,7 @@ export class TransactionsService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async transfer(fromId: string, toId: string, amount: number) {
+  async transfer(fromId: string, { toId, amount }: CreateTransactionDto) {
     if (fromId === toId) {
       throw new HttpException(
         'Cannot transfer to yourself',
@@ -18,10 +19,10 @@ export class TransactionsService {
       );
     }
 
-    const fromUser = await this.usersRepository.findOne({
-      where: { id: fromId },
-    });
-    const toUser = await this.usersRepository.findOne({ where: { id: toId } });
+    const [fromUser, toUser] = await Promise.all([
+      this.usersRepository.findOne({ where: { id: fromId } }),
+      this.usersRepository.findOne({ where: { id: toId } }),
+    ]);
 
     if (!fromUser || !toUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
