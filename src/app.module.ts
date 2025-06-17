@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { AuthService } from './auth/auth.service';
+import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { TransactionsService } from './transactions/transactions.service';
-import { TransactionsController } from './transactions/transactions.controller';
+import { UsersModule } from './users/users.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -17,13 +20,14 @@ import { TransactionsController } from './transactions/transactions.controller';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [User],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
+    TransactionsModule,
   ],
-  controllers: [AppController, TransactionsController],
-  providers: [AppService, AuthService, TransactionsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
