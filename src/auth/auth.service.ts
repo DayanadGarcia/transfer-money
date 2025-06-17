@@ -42,7 +42,7 @@ export class AuthService {
     const payload = { username: user.username, sub: user.id };
     return {
       token: this.jwtService.sign(payload),
-      expiresIn: process.env.JWT_EXPIRES_IN || '60s',
+      expiresIn: process.env.JWT_EXPIRES_IN || '3600s',
     };
   }
 }

@@ -11,9 +11,9 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ type: 'date' })
   birthdate: Date;
 
-  @Column({ type: 'decimal', default: 100 })
+  @Column({ type: 'float', default: 100 })
   balance: number;
 }
