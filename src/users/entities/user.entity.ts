@@ -12,7 +12,7 @@ export class User {
   password: string;
 
   @Column()
-  birthdate: string;
+  birthdate: Date;
 
   @Column({ type: 'decimal', default: 100 })
   balance: number;
