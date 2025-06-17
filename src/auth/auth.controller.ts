@@ -4,9 +4,14 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { SigninResponseDto } from './dto/signin-response.dto';
+import { SignupResponseDto } from 'src/users/dto/signup-response.dto';
+import { SignupDto } from 'src/users/dto/signup.dto';
+import { SigninDto } from './dto/signin.dto';
 
 @Controller('users')
 export class AuthController {
@@ -16,9 +21,8 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(
-    @Body() body: { username: string; password: string; birthdate: Date },
-  ) {
+  @HttpCode(HttpStatus.CREATED)
+  async signup(@Body() body: SignupDto): Promise<SignupResponseDto> {
     const existingUser = await this.usersService.findOneByUsername(
       body.username,
     );
@@ -29,7 +33,8 @@ export class AuthController {
   }
 
   @Post('signin')
-  async signin(@Body() body: { username: string; password: string }) {
+  @HttpCode(HttpStatus.OK)
+  async signin(@Body() body: SigninDto): Promise<SigninResponseDto> {
     const user = await this.authService.validateUser(
       body.username,
       body.password,

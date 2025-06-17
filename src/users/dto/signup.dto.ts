@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { IsString, IsDateString, MinLength, IsNotEmpty } from 'class-validator';
 
-export class CreateUserDto {
+export class SignupDto {
   @IsString()
   @IsNotEmpty()
   username: string;
