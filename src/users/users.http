@@ -1,0 +1,33 @@
+### Criar usuário
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "username": "User",
+  "password": "password123",
+  "birthdate": "1990-01-01"
+}
+
+### Fazer login e pegar token
+POST http://localhost:3000/users/signin
+Content-Type: application/json
+
+{
+  "username": "User2",
+  "password": "password123"
+}
+// @name signin
+
+### Transferência usando variável do token
+POST http://localhost:3000/transfer
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "toId": "507f13ac-3f18-4ad8-a6ca-dbf1f88e37ea",
+  "amount": 50
+}
+
+### Buscar usuários usando variável do token
+GET http://localhost:3000/users
+Authorization: Bearer {token}
