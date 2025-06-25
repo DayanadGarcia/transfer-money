@@ -1,14 +1,23 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { Transaction } from './entities/transaction.entity';
+import { TransactionListDto } from './dto/transaction-list.dto';
+import { TransactionDetailDto } from './dto/transaction-detail.dto';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Transaction) private txRepo: Repository<Transaction>,
   ) {}
 
   async transfer(fromId: string, { toId, amount }: CreateTransactionDto) {
@@ -36,5 +45,22 @@ export class TransactionsService {
     toUser.balance = parseFloat((toUser.balance + amount).toFixed(2));
 
     await this.usersRepository.save([fromUser, toUser]);
+
+    const tx = this.txRepo.create({ fromId, toId, amount });
+    await this.txRepo.save(tx);
+  }
+
+  async findAll(): Promise<TransactionListDto[]> {
+    return this.txRepo.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async findOne(id: string): Promise<TransactionDetailDto> {
+    const tx = await this.txRepo.findOne({ where: { id } });
+
+    if (!tx) {
+      throw new NotFoundException('Transação não encontrada');
+    }
+
+    return tx;
   }
 }
