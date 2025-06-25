@@ -33,4 +33,19 @@ export class UsersService {
     });
     return users as UserPublicDto[];
   }
+
+  async findOneById(id: string): Promise<User | null> {
+    const user = this.usersRepository.findOne({
+      select: [
+        'id',
+        'username',
+        'birthdate',
+        'balance',
+        'createdAt',
+        'updatedAt',
+      ],
+      where: { id },
+    });
+    return user;
+  }
 }
